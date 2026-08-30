@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cfast_quotation_log_tree" model="ir.ui.view">
+        <field name="name">cfast.quotation.log.list</field>
+        <field name="model">cfast.quotation.log</field>
+        <field name="arch" type="xml">
+            <list string="Devis CFAST"
+                  create="false"
+                  delete="false"
+                  edit="false"
+                  multi_edit="false"
+                  default_order="create_date desc"
+                  decoration-success="sync_state in ('order_confirmed','project_generated')"
+                  decoration-danger="sync_state == 'error'">
+
+                <field name="quotation_date" optional="show"/>
+                <field name="reference" optional="show"/>
+                <field name="name" optional="show"/>
+
+                <field name="quotation_type_name"
+                       string="Type de devis"
+                       optional="show"/>
+
+                <field name="status" optional="hide"/>
+                <field name="is_closed" optional="hide"/>
+
+                <field name="total_activation_price"
+                       widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       optional="show"/>
+
+                <field name="total_periodic_price"
+                       widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       optional="show"/>
+
+                <field name="sync_state"
+                       widget="badge"
+                       optional="show"/>
+
+                <field name="sale_order_id"
+                       optional="show"/>
+
+                <button name="action_create_sale_order"
+                        type="object"
+                        string="Créer commande"
+                        class="btn-link"
+                        icon="fa-plus"
+                        invisible="sale_order_id"/>
+
+                <button name="action_open_sale_order"
+                        type="object"
+                        string="Voir commande"
+                        class="btn-link"
+                        icon="fa-external-link"
+                        invisible="not sale_order_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cfast_quotation_log_form" model="ir.ui.view">
+        <field name="name">cfast.quotation.log.form</field>
+        <field name="model">cfast.quotation.log</field>
+        <field name="arch" type="xml">
+            <form string="devis CFAST" create="false">
+                <header>
+                    <button name="action_create_sale_order"
+                            type="object"
+                            string="Créer la commande"
+                            class="btn-primary"
+                            invisible="sale_order_id"/>
+
+                    <button name="action_open_sale_order"
+                            type="object"
+                            string="Voir la commande"
+                            class="btn-secondary"
+                            invisible="not sale_order_id"/>
+
+                    <field name="sync_state"
+                           widget="statusbar"
+                           statusbar_visible="draft,order_created,order_confirmed,project_generated,error"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_sale_order"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="not sale_order_id">
+                            <field name="sale_order_id"
+                                   widget="statinfo"
+                                   string="Devis Odoo"/>
+                        </button>
+
+                        <button name="action_open_project"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-folder-open-o"
+                                invisible="not project_id">
+                            <field name="project_id"
+                                   widget="statinfo"
+                                   string="Projet"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference"
+                                   placeholder="Référence CFAST"/>
+                        </h1>
+
+                        <div class="text-muted">
+                            <field name="name"
+                                   placeholder="Nom / Libellé CFAST"/>
+                        </div>
+                    </div>
+
+                    <group col="4">
+                        <separator string="Informations CFAST"
+                                   colspan="4"/>
+
+                        <group col="2">
+                            <field name="partner_id" readonly="1"/>
+                            <field name="customer_id" readonly="1"/>
+                            <field name="cfast_quotation_id" readonly="1"/>
+                            <field name="quotation_type_name" readonly="1"/>
+                            <field name="status" readonly="1"/>
+                            <field name="is_closed" readonly="1"/>
+                        </group>
+
+                        <group col="2">
+                            <field name="salesperson_id" readonly="1"/>
+                            <field name="quotation_date" readonly="1"/>
+                            <field name="send_datetime" readonly="1"/>
+                            <field name="validity_duration" readonly="1"/>
+                            <field name="company_id"
+                                   readonly="1"
+                                   groups="base.group_multi_company"/>
+                        </group>
+
+                        <separator string="Montants"
+                                   colspan="4"/>
+
+                        <group col="2">
+                            <field name="total_activation_price"
+                                   readonly="1"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+
+                        <group col="2">
+                            <field name="total_periodic_price"
+                                   readonly="1"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+
+                        <separator string="Conversion Odoo"
+                                   colspan="4"/>
+
+                        <group col="2">
+                            <field name="sale_order_id" readonly="1"/>
+                            <field name="project_id"
+                                   readonly="1"
+                                   invisible="not project_id"/>
+                        </group>
+
+                        <group col="2"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Synchronisation">
+                            <group col="4">
+                                <group colspan="4"
+                                       invisible="sync_state != 'error'">
+                                    <separator string="Erreur"
+                                               colspan="4"/>
+
+                                    <field name="error_message"
+                                           nolabel="1"
+                                           readonly="1"/>
+
+                                    <field name="confirmation_error"
+                                           nolabel="1"
+                                           readonly="1"
+                                           invisible="not confirmation_error"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="JSON brut">
+                            <field name="raw_json"
+                                   widget="text"
+                                   nolabel="1"
+                                   readonly="1"
+                                   placeholder="{}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cfast_quotation_log_form_wizard" model="ir.ui.view">
+        <field name="name">cfast.quotation.log.form.wizard</field>
+        <field name="model">cfast.quotation.log</field>
+        <field name="priority" eval="100"/>
+
+        <field name="arch" type="xml">
+            <form string="Devis CFAST"
+                  create="false"
+                  edit="false"
+                  delete="false">
+
+                <header>
+                    <button name="action_create_sale_order"
+                            type="object"
+                            string="Créer la commande"
+                            class="btn-primary"
+                            invisible="sale_order_id"/>
+
+                    <button name="action_open_sale_order"
+                            type="object"
+                            string="Voir la commande"
+                            class="btn-secondary"
+                            invisible="not sale_order_id"/>
+
+                    <field name="sync_state"
+                           widget="statusbar"
+                           statusbar_visible="draft,order_created,order_confirmed,project_generated,error"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_sale_order"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="not sale_order_id">
+                            <field name="sale_order_id"
+                                   widget="statinfo"
+                                   string="Commande Odoo"/>
+                        </button>
+
+                        <button name="action_open_project"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-folder-open-o"
+                                invisible="not project_id">
+                            <field name="project_id"
+                                   widget="statinfo"
+                                   string="Projet"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference"
+                                   readonly="1"
+                                   placeholder="Référence CFAST"/>
+                        </h1>
+
+                        <div class="text-muted">
+                            <field name="name"
+                                   readonly="1"
+                                   placeholder="Nom / Libellé CFAST"/>
+                        </div>
+                    </div>
+
+                    <group col="4">
+                        <group col="2">
+                            <field name="quotation_date" readonly="1"/>
+                            <field name="status" readonly="1"/>
+                            <field name="quotation_type_name" readonly="1"/>
+                        </group>
+
+                        <group col="2">
+                            <field name="total_activation_price"
+                                   readonly="1"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+
+                            <field name="total_periodic_price"
+                                   readonly="1"
+                                   widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                    </group>
+
+                    <group invisible="sync_state != 'error'">
+                        <separator string="Erreur"/>
+                        <field name="error_message"
+                               nolabel="1"
+                               readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

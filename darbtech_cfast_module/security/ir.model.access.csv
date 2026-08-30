@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cfast_quotation_log_user,cfast.quotation.log internal user,model_cfast_quotation_log,base.group_user,1,0,0,0
+access_cfast_quotation_log_salesman,cfast.quotation.log salesman,model_cfast_quotation_log,sales_team.group_sale_salesman,1,1,1,0
+access_cfast_quotation_log_manager,cfast.quotation.log manager,model_cfast_quotation_log,sales_team.group_sale_manager,1,1,1,1

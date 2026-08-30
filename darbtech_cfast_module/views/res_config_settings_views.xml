@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_cfast" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.cfast</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form" position="inside">
+                <app string="CFast" name="cfast_api_settings" groups="base.group_system">
+
+                    <block title="Endpoints" name="cfast_api_endpoints_block">
+                        <setting string="URL Token"
+                                 help="Endpoint utilisé pour récupérer le token OAuth.">
+                            <field name="cfast_token_url"
+                                   placeholder="https://v2.cfast.fr/auth/connect/token"/>
+                        </setting>
+
+                        <setting string="Base URL"
+                                 help="URL de base de l’API CFast.">
+                            <field name="cfast_base_url"
+                                   placeholder="https://v2.cfast.fr"/>
+                        </setting>
+                    </block>
+
+                    <block title="Authentification" name="cfast_api_auth_block">
+                        <setting string="Type d'authentification"
+                                 help="Mode d’authentification utilisé pour obtenir le token.">
+                            <field name="cfast_auth_type"/>
+                        </setting>
+
+                        <setting string="Scope"
+                                 help="Scopes OAuth envoyés à l’endpoint de token.">
+                            <field name="cfast_scope"
+                                   placeholder="openid identity offline_access cfast bill subs roles email"/>
+                        </setting>
+                    </block>
+
+                    <block title="Identifiants techniques" name="cfast_api_credentials_block">
+                        <setting string="Client ID"
+                                 help="Identifiant du client OAuth.">
+                            <field name="cfast_client_id"
+                                   placeholder="gst.client"/>
+                        </setting>
+
+                        <setting string="Client Secret"
+                                 help="Secret associé au client OAuth.">
+                            <field name="cfast_client_secret" password="True"/>
+                        </setting>
+
+                        <setting string="Nom d'utilisateur"
+                                 help="Compte technique utilisé pour l’authentification.">
+                            <field name="cfast_username"
+                                   placeholder="gs.api"/>
+                        </setting>
+
+                        <setting string="Mot de passe"
+                                 help="Mot de passe du compte technique.">
+                            <field name="cfast_password" password="True"/>
+                        </setting>
+                    </block>
+
+                    <block title="Test de connexion" name="cfast_test_connection_block">
+                        <setting string="Tester l'authentification API"
+                                 help="Envoie une requête à l'endpoint token avec les paramètres enregistrés.">
+                            <button name="action_test_connection"
+                                    string="Tester"
+                                    type="object"
+                                    class="btn btn-primary"/>
+                        </setting>
+                    </block>
+
+                    <block title="Token" name="cfast_access_token_block">
+                        <setting string="Token"
+                                help="Token retourné par CFast et stocké dans les paramètres système.">
+                            <field name="cfast_access_token" readonly="1"/>
+                        </setting>
+                    </block>
+
+                </app>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
